@@ -7,6 +7,9 @@
         <classes>
             <class name="LoginTests"/>
             <class name="BaseTest"/>
+            <class name="SuccessfulLoginTest"/>
+            <class name="NegativeLoginTest"/>
+            <class name="InvalidPasswordTest"/>
         </classes>
     </test>
 </suite>

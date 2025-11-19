@@ -1,11 +1,95 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
+
+import java.time.Duration;
+import java.util.UUID;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 public class BaseTest {
+
+    public WebDriver driver;
+    public String url = "https://demo.koel.dev/";
 
     @BeforeSuite
     static void setupClass() {
         WebDriverManager.chromedriver().setup();
     }
+
+    @BeforeMethod
+    public void launchBrowser() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-notifications");
+        driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+    }
+
+    @AfterMethod
+    public void closeBrowser() {
+        driver.quit();
+    }
+
+    public void navigateToPage() {
+        driver.get(url);
+    }
+
+    public void provideEmail(String email) {
+        WebElement emailField = driver.findElement(By.cssSelector("input[type='email']"));
+        emailField.clear();
+        emailField.sendKeys(email);
+    }
+
+    public void providePassword(String password) {
+        WebElement passwordField = driver.findElement(By.cssSelector("input[type='password']"));
+        passwordField.clear();
+        passwordField.sendKeys(password);
+    }
+
+    public void clickLogin() {
+        WebElement loginBtn = driver.findElement(By.cssSelector("button[type='submit']"));
+        loginBtn.click();
+    }
+
+    public void isAvatarDisplayed() {
+        WebElement avatarIcon = driver.findElement(By.cssSelector(".view-profile"));
+        Assert.assertTrue(avatarIcon.isDisplayed());
+    }
+
+    public void clickAvatarIcon() {
+        WebElement avatarIcon = driver.findElement(By.cssSelector(".view-profile"));
+        avatarIcon.click();
+    }
+
+    public void provideCurrentPassword(String currentPassword) {
+        WebElement currentPasswordField = driver.findElement(By.cssSelector("input[data-testid='currentPassword']"));
+        currentPasswordField.clear();
+        currentPasswordField.sendKeys(currentPassword);
+    }
+
+    public void provideProfileName(String newName) {
+        WebElement profileNameField = driver.findElement(By.cssSelector("input[data-testid='name']"));
+        profileNameField.clear();
+        profileNameField.sendKeys(newName);
+    }
+
+    public String generateRandomName() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    public void loginAsUser() {
+        navigateToPage();
+        provideEmail("demo@koel.dev");
+        providePassword("demo");
+        clickLogin();
+    }
+
 }
