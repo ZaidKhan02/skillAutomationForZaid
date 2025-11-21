@@ -85,6 +85,27 @@ public class BaseTest {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
+    public void searchSong(String songName) {
+        WebElement songNameField = driver.findElement(By.cssSelector("input[type='search']"));
+        songNameField.clear();
+        songNameField.sendKeys(songName);
+    }
+
+    public void clickViewAllBtn() {
+        WebElement viewAllBtn = driver.findElement(By.cssSelector("button[data-testid='view-all-songs-btn']"));
+        viewAllBtn.click();
+    }
+
+    public void selectFirstSongResult() {
+        WebElement firstSong = driver.findElement(By.xpath("//div[contains(@class, 'items-wrapper')]//div[1]"));
+        firstSong.click();
+    }
+
+    public void clickAddToBtn() {
+        WebElement addToBtn = driver.findElement(By.xpath("//div[@data-testid='song-list-controls']//button[2]"));
+        addToBtn.click();
+    }
+
     public void loginAsUser() {
         navigateToPage();
         provideEmail("demo@koel.dev");
