@@ -1,26 +1,43 @@
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
-
 public class LoginTests extends BaseTest {
+
+    /*
+     * @DataProvider(name = "NegativeLoginTestData")
+     * public Object[][] getDataFromDataProviders() {
+     * return new Object[][] {
+     * { "invalid@koel.dev", "invalidPass" },
+     * { "demo@koel.dev", "invalidPass" },
+     * { "invalid@email.com", "demo" },
+     * { "", "" },
+     * { "", "demo" },
+     * { "demo@koel.dev", "" }
+     * };
+     * }
+     */
+
+    @Test(dataProvider = "NegativeLoginTestData", dataProviderClass = LoginDataProviders.class)
+    public void negativeLoginTests(String email, String password) {
+        provideEmail(email);
+        providePassword(password);
+        clickLogin();
+        Assert.assertEquals(driver.getCurrentUrl(), url);
+    }
+
     @Test
     public void loginValidEmailPassword() throws InterruptedException {
         // Pre-condition: chromedriver is set up by BaseTest
         // I dont think we call setupClass, launchBrower, closebrowser becuase those are
         // beforesuite, beforemethod, aftermethod
-        navigateToPage();
+        /* navigateToPage(); */
 
         provideEmail("demo@koel.dev");
 
         providePassword("demo");
 
         clickLogin();
-
-        Thread.sleep(2000);
 
         isAvatarDisplayed();
 
@@ -31,19 +48,15 @@ public class LoginTests extends BaseTest {
         loginAsUser();
 
         clickAvatarIcon();
-        Thread.sleep(2000);
 
         String randomName = generateRandomName();
         System.out.println("The random name is " + randomName);
 
         provideCurrentPassword("demo");
-        Thread.sleep(2000);
 
         provideProfileName(randomName);
-        Thread.sleep(2000);
 
         provideEmail("demo@koel.dev");
-        Thread.sleep(2000);
     }
 
     @Test
@@ -51,14 +64,13 @@ public class LoginTests extends BaseTest {
         // Pre-condition: chromedriver is set up by BaseTest
         // I dont think we call setupClass, launchBrower, closebrowser becuase those are
         // beforesuite, beforemethod, aftermethod
-        navigateToPage();
+        /* navigateToPage(); */
 
         provideEmail("demo@joel.dev");
 
         providePassword("demo");
 
         clickLogin();
-        Thread.sleep(2000);
 
         /* If I remov these lines, it will pass */
         isAvatarDisplayed();
@@ -69,13 +81,11 @@ public class LoginTests extends BaseTest {
         // Pre-condition: chromedriver is set up by BaseTest
         // I dont think we call setupClass, launchBrower, closebrowser becuase those are
         // beforesuite, beforemethod, aftermethod
-        navigateToPage();
+        /* navigateToPage(); */
 
         provideEmail("demo@joel.dev");
 
         clickLogin();
-
-        Thread.sleep(2000);
 
         /* If I remov these lines, it will pass */
         isAvatarDisplayed();

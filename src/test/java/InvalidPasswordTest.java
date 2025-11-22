@@ -16,7 +16,7 @@ public class InvalidPasswordTest extends BaseTest {
         // Pre-condition: chromedriver is set up by BaseTest
         // I dont think we call setupClass, launchBrower, closebrowser becuase those are
         // beforesuite, beforemethod, aftermethod
-        navigateToPage();
+        /* navigateToPage(); */
 
         provideEmail("demo@joel.dev");
 
