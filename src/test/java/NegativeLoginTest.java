@@ -1,12 +1,8 @@
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.time.Duration;
+import pages.HomePage;
+import pages.LoginPage;
 
 public class NegativeLoginTest extends BaseTest {
 
@@ -18,14 +14,14 @@ public class NegativeLoginTest extends BaseTest {
         // beforesuite, beforemethod, aftermethod
         /* navigateToPage(); */
 
-        provideEmail("demo@joel.dev");
+        LoginPage loginPage = new LoginPage(driver);
+        HomePage homePage = new HomePage(driver);
 
-        providePassword("demo");
+        loginPage.provideEmail("demo@joel.dev");
+        loginPage.providePassword("demo");
+        loginPage.clickLogin();
 
-        clickLogin();
-        Thread.sleep(2000);
+        Assert.assertTrue(homePage.getUserAvatar().isDisplayed());
 
-        /* If I remov these lines, it will pass */
-        isAvatarDisplayed();
     }
 }

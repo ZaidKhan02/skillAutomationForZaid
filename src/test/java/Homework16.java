@@ -1,21 +1,26 @@
 import org.testng.annotations.Test;
 
+import pages.LoginPage;
+import pages.SearchBar;
+
 public class Homework16 extends BaseTest {
+
     @Test
     public void addSongToPlaylist() throws InterruptedException {
-        loginAsUser();
+        LoginPage loginPage = new LoginPage(driver);
+        SearchBar searchBar = new SearchBar(driver);
 
-        searchSong("Dark");
-        Thread.sleep(2000);
+        loginPage.provideEmail("demo@koel.dev");
+        loginPage.providePassword("demo");
+        loginPage.clickLogin();
 
-        clickViewAllBtn();
-        Thread.sleep(2000);
+        searchBar.searchSong("Dark");
 
-        selectFirstSongResult();
-        Thread.sleep(2000);
+        searchBar.clickViewAllBtn();
 
-        clickAddToBtn();
-        Thread.sleep(2000);
+        searchBar.selectFirstSongResult();
+
+        searchBar.clickAddToBtn();
 
     }
 }
