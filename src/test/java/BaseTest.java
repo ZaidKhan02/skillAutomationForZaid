@@ -3,6 +3,9 @@ import pages.HomePage;
 import pages.LoginPage;
 import pages.ProfilePage;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.nio.charset.MalformedInputException;
 import java.time.Duration;
 import java.util.List;
 
@@ -11,7 +14,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
@@ -27,25 +35,95 @@ public class BaseTest {
     public String url;
     Actions actions;
 
-    @BeforeSuite
-    static void setupClass() {
-        WebDriverManager.chromedriver().setup();
-    }
+    /*
+     * @BeforeSuite
+     * public void setupClass() {
+     * WebDriverManager.chromedriver().setup();
+     * }
+     */
+
+    // Both are part of parallel testing
+    // private static final ThreadLocal<WebDriver> threadDriver = new
+    // ThreadLocal<>();
+
+    /*
+     * public static WebDriver getDriver() {
+     * return threadDriver.get();
+     * }
+     */
 
     @BeforeMethod
     @Parameters({ "BaseURL" })
-    public void launchBrowser(@Optional("https://demo.koel.dev/#/home") String baseURL) {
+    public void launchBrowser(@Optional("https://demo.koel.dev/#/home") String baseURL) /*
+                                                                                         * throws MalformedURLException
+                                                                                         */ {
         this.url = baseURL;
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
-        options.addArguments("--disable-notifications");
-        driver = new ChromeDriver(options);
+        driver = pickBrowser(System.getProperty("browser", "chrome"));
+        // part of Parallel testing
+        // threadDriver.set(pickBrowser(System.getProperty("browser", "chrome")));
+        /*
+         * ChromeOptions options = new ChromeOptions();
+         * options.addArguments("--remote-allow-origins=*");
+         * options.addArguments("--disable-notifications");
+         * driver = new ChromeDriver(options);
+         */
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         actions = new Actions(driver);
         /* navigateToPage(url); */
         driver.get(url);
+
+        // part of Parallel testing
+        /*
+         * getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+         * getDriver().manage().window().maximize();
+         * wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
+         * actions = new Actions(getDriver());
+         */
+    }
+
+    public WebDriver pickBrowser(String browser) /* throws MalformedURLException */ {
+        // this is for grid selenium
+        /*
+         * DesiredCapabilities caps = new DesiredCapabilities();
+         * String gridURL = "http://192.168.55.103:4444"; //replace with my grid url
+         */
+
+        switch (browser.toLowerCase()) {
+
+            case "firefox": // gradle clean test -Dbrowser=firefox
+                WebDriverManager.firefoxdriver().setup();
+                return new FirefoxDriver();
+
+            case "edge": // gradle clean test -Dbrowser=MicrosoftEdge
+            case "microsoftedge":
+                WebDriverManager.edgedriver().setup();
+                EdgeOptions edgeOptions = new EdgeOptions();
+                edgeOptions.addArguments("--remote-allow-origins=*");
+                return new EdgeDriver(edgeOptions);
+
+            /*
+             * case "grid-edge": //gradle clean test -Dbrowser=grid-edge
+             * caps.setCapability("browserName", "MicrosoftEdge");
+             * return new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
+             * 
+             * case "grid-firefox": //gradle clean test -Dbrowser=grid-firefox
+             * caps.setCapability("browserName", "firefox");
+             * return new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
+             * 
+             * case "grid-chrome": //gradle clean test -Dbrowser=grid-chrome
+             * caps.setCapability("browserName", "chrome");
+             * return new RemoteWebDriver(URI.create(gridURL).toURL(), caps);
+             */
+
+            default: // chrome
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--remote-allow-origins=*");
+                chromeOptions.addArguments("--disable-notifications");
+                return new ChromeDriver(chromeOptions);
+        }
     }
 
     @AfterMethod
@@ -53,9 +131,20 @@ public class BaseTest {
         driver.quit();
     }
 
-    public void navigateToPage(String url) {
-        driver.get(url);
-    }
+    // part of Parallel testing
+    /*
+     * @AfterMethod
+     * public void tearDown() {
+     * threadDriver.get().close();
+     * threadDriver.remove();
+     * }
+     */
+
+    /*
+     * public void navigateToPage(String url) {
+     * driver.get(url);
+     * }
+     */
 
     // REMOVE THESE HELPERS BELOW AND MOVE THEM TO THEIR RESPECTIVE OBJECTS
 

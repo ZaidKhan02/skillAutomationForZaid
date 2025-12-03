@@ -14,9 +14,19 @@ public class LoginTests extends BaseTest {
     HomePage homePage;
     ProfilePage profilePage;
 
+    // part of Parallel testing
+    /*
+     * @BeforeMethod
+     * public void setUpPages() {
+     * loginPage = new LoginPage(getDriver());
+     * homePage = new HomePage(getDriver());
+     * profilePage = new ProfilePage(getDriver());
+     * }
+     */
+
     @BeforeMethod
     public void setUpPages() {
-        loginPage = new LoginPage(driver);
+        loginPage = new LoginPage(driver); // getDriver()
         homePage = new HomePage(driver);
         profilePage = new ProfilePage(driver);
     }
